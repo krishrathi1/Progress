@@ -8,7 +8,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { BookOpen, ExternalLink } from "@/lib/icons";
 import type { Topic } from "@/lib/types";
 import { SUBJECT_MAP } from "@/lib/curriculum";
-import { getNote, hasNote } from "@/lib/notes";
+import { noteKey, noteUrl, loadManifest } from "@/lib/notes";
 import { Button } from "@/components/ui/button";
 import { DifficultyBadge } from "./difficulty-badge";
 import {
@@ -23,7 +23,17 @@ import { cn } from "@/lib/utils";
 /** Book icon that opens a rich learning-notes dialog for a topic. */
 export function NotesButton({ topic }: { topic: Topic }) {
   const [open, setOpen] = React.useState(false);
-  const available = hasNote(topic);
+  const [available, setAvailable] = React.useState(false);
+
+  React.useEffect(() => {
+    let alive = true;
+    loadManifest().then((m) => {
+      if (alive) setAvailable(m.has(noteKey(topic)));
+    });
+    return () => {
+      alive = false;
+    };
+  }, [topic]);
 
   return (
     <>
@@ -56,7 +66,24 @@ function NotesDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const subject = SUBJECT_MAP[topic.subjectId];
-  const md = getNote(topic);
+  // undefined = loading, null = not available, string = markdown
+  const [md, setMd] = React.useState<string | null | undefined>(undefined);
+
+  React.useEffect(() => {
+    let alive = true;
+    setMd(undefined);
+    fetch(noteUrl(topic))
+      .then((r) => (r.ok ? r.text() : null))
+      .then((text) => {
+        if (alive) setMd(text);
+      })
+      .catch(() => {
+        if (alive) setMd(null);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [topic]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -80,7 +107,12 @@ function NotesDialog({
         </DialogHeader>
 
         <div className="st-scroll max-h-[calc(88vh-92px)] overflow-y-auto px-6 py-5">
-          {md ? (
+          {md === undefined ? (
+            <div className="flex items-center justify-center gap-2 py-16 text-sm text-muted-foreground">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              Loading notes…
+            </div>
+          ) : md ? (
             <article className="notes-prose">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
