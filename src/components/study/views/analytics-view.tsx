@@ -420,7 +420,7 @@ export function AnalyticsView() {
                     <th className="py-3 pl-5 pr-4 font-semibold">Topic</th>
                     <th className="px-4 py-3 font-semibold">Track</th>
                     <th className="px-4 py-3 text-right font-semibold">Duration</th>
-                    <th className="py-3 pl-4 pr-5 text-right font-semibold">When</th>
+                    <th className="py-3 pl-4 pr-5 text-right font-semibold hidden sm:table-cell">When</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -436,7 +436,7 @@ export function AnalyticsView() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right font-semibold tabular-nums text-muted-foreground">{fmtDuration(log.dur)}</td>
-                        <td className="py-3 pl-4 pr-5 text-right font-medium tabular-nums text-muted-foreground">
+                        <td className="py-3 pl-4 pr-5 text-right font-medium tabular-nums text-muted-foreground hidden sm:table-cell">
                           {new Date(log.ts).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
                         </td>
                       </tr>

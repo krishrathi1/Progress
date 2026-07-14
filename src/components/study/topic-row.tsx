@@ -12,6 +12,7 @@ import { NotesButton } from "./notes-viewer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 interface TopicRowProps {
   topic: Topic;
@@ -30,6 +31,14 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
   const stopAndComplete = useStudyStore((s) => s.stopAndComplete);
 
   const [notesOpen, setNotesOpen] = React.useState(false);
+  const [localNotes, setLocalNotes] = React.useState("");
+
+  React.useEffect(() => {
+    if (notesOpen) {
+      setLocalNotes(progress?.notes ?? "");
+    }
+  }, [notesOpen, progress?.notes]);
+
   const subject = SUBJECT_MAP[topic.subjectId];
   const status = progress?.status ?? "todo";
   const isDone = status === "done";
@@ -99,9 +108,9 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
 
         {/* notes editor */}
         {notesOpen && (
-          <div className="mt-2 st-fade-in">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-[11px] font-medium text-muted-foreground">Notes</span>
+          <div className="mt-2 st-fade-in space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-muted-foreground">My Notes</span>
               <button
                 onClick={() => setNotesOpen(false)}
                 className="text-muted-foreground hover:text-foreground"
@@ -112,11 +121,34 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
             </div>
             <Textarea
               autoFocus
-              value={progress?.notes ?? ""}
-              onChange={(e) => setNotes(topic.qid, e.target.value)}
+              value={localNotes}
+              onChange={(e) => setLocalNotes(e.target.value)}
               placeholder="Jot down key points, code snippets, or doubts…"
-              className="min-h-[70px] text-xs"
+              className="min-h-[80px] text-xs font-sans"
             />
+            <div className="flex items-center justify-end gap-2">
+              <Button
+                variant="outline"
+                className="h-6 px-2.5 text-[10px] font-semibold"
+                onClick={() => {
+                  setLocalNotes("");
+                  setNotes(topic.qid, "");
+                  toast.success("Notes cleared");
+                }}
+              >
+                Clear
+              </Button>
+              <Button
+                className="h-6 px-2.5 text-[10px] font-semibold"
+                onClick={() => {
+                  setNotes(topic.qid, localNotes);
+                  toast.success("Notes saved");
+                  setNotesOpen(false);
+                }}
+              >
+                Save
+              </Button>
+            </div>
           </div>
         )}
       </div>

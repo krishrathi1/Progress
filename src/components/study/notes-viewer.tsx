@@ -88,7 +88,7 @@ function NotesDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[88vh] gap-0 overflow-hidden p-0 sm:max-w-3xl">
-        <DialogHeader className="space-y-0 border-b px-6 py-4">
+        <DialogHeader className="space-y-0 border-b px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-center gap-2">
             {subject && (
               <span
@@ -103,10 +103,10 @@ function NotesDialog({
             )}
             {topic.difficulty && <DifficultyBadge difficulty={topic.difficulty} />}
           </div>
-          <DialogTitle className="font-display pt-1.5 text-lg">{topic.name}</DialogTitle>
+          <DialogTitle className="font-display pt-1.5 text-base sm:text-lg">{topic.name}</DialogTitle>
         </DialogHeader>
 
-        <div className="st-scroll max-h-[calc(88vh-92px)] overflow-y-auto px-6 py-5">
+        <div className="st-scroll max-h-[calc(88vh-76px)] sm:max-h-[calc(88vh-92px)] overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
           {md === undefined ? (
             <div className="flex items-center justify-center gap-2 py-16 text-sm text-muted-foreground">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />

@@ -192,7 +192,7 @@ export function TrackView({
                 ) : (
                   f.icon
                 )}
-                <span>{f.label}</span>
+                <span className="hidden sm:inline">{f.label}</span>
               </button>
             );
           })}
