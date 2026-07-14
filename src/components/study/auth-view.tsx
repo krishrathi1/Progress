@@ -116,12 +116,12 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-y-auto bg-background py-8 px-4">
+    <div className="relative flex h-[100dvh] min-h-0 w-full items-start justify-center overflow-x-hidden overflow-y-auto overscroll-contain bg-background px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-4 sm:py-8">
       {/* Background decoration */}
       <div className="pointer-events-none absolute left-1/4 top-1/4 h-[350px] w-[350px] rounded-full bg-amber-500/10 blur-[100px]" />
       <div className="pointer-events-none absolute right-1/4 bottom-1/4 h-[350px] w-[350px] rounded-full bg-orange-600/10 blur-[100px]" />
 
-      <Card className="relative w-full max-w-[400px] border-border/50 bg-card/60 shadow-2xl backdrop-blur-md">
+      <Card className="relative my-auto w-full max-w-[400px] shrink-0 border-border/50 bg-card/60 shadow-2xl backdrop-blur-md">
         <CardHeader className="space-y-1.5 text-center">
           <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-orange-500/20">
             <GraduationCap className="h-6 w-6" />
