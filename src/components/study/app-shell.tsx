@@ -18,6 +18,7 @@ import { AchievementsView } from "./views/achievements-view";
 import { DataView } from "./views/data-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LogOut } from "lucide-react";
+import { ProfileButton } from "./profile-button";
 
 const VIEW_TITLES: Record<string, string> = {
   dashboard: "Dashboard",
@@ -134,6 +135,7 @@ export function AppShell({ onLogout }: { onLogout: () => void }) {
               <Search className="h-4 w-4" />
             </Button>
             <ThemeToggle />
+            <ProfileButton />
             <Button
               variant="ghost"
               size="icon"

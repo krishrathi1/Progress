@@ -8,6 +8,7 @@ import type {
   Settings,
   TopicProgress,
   TopicStatus,
+  Profile,
 } from "@/lib/types";
 import { CURRICULUM, ITEM_INDEX, SUBJECT_MAP } from "@/lib/curriculum";
 import { todayKey } from "@/lib/format";
@@ -21,15 +22,23 @@ export const DEFAULT_SETTINGS: Settings = {
   celebrate: true,
 };
 
-const DEFAULT_STATE: Omit<PersistedState, "settings"> = {
+export const DEFAULT_PROFILE: Profile = {
+  avatar: "grad-1",
+  customTitle: "Novice Learner",
+  motto: "Consistency is key.",
+};
+
+const DEFAULT_STATE: Omit<PersistedState, "settings"> & { profile: Profile } = {
   progress: {},
   daily: {},
   activeTimer: null,
   seenAch: [],
   meta: { created: Date.now() },
+  profile: { ...DEFAULT_PROFILE },
 };
 
 interface StudyStoreState extends PersistedState {
+  profile: Profile;
   /* ---- actions ---- */
   setSetting: <K extends keyof Settings>(k: K, v: Settings[K]) => void;
   prog: (qid: string) => TopicProgress;
@@ -53,6 +62,7 @@ interface StudyStoreState extends PersistedState {
   resetAll: () => void;
   importData: (json: string) => void;
   exportData: () => string;
+  updateProfile: (updates: Partial<Profile>) => void;
   _recompute: () => void;
 }
 
@@ -253,6 +263,7 @@ export const useStudyStore = create<StudyStoreState>()(
             seenAch: parsed.seenAch || [],
             meta: parsed.meta || { created: Date.now() },
             settings: { ...DEFAULT_SETTINGS, ...(parsed.settings || {}) },
+            profile: { ...DEFAULT_PROFILE, ...(parsed.profile || {}) },
           });
         } catch (e) {
           console.error("import failed", e);
@@ -260,13 +271,16 @@ export const useStudyStore = create<StudyStoreState>()(
       },
 
       exportData: () => {
-        const { progress, daily, activeTimer, seenAch, meta, settings } = get();
+        const { progress, daily, activeTimer, seenAch, meta, settings, profile } = get();
         return JSON.stringify(
-          { progress, daily, activeTimer, seenAch, meta, settings },
+          { progress, daily, activeTimer, seenAch, meta, settings, profile },
           null,
           2,
         );
       },
+
+      updateProfile: (updates) =>
+        set((s) => ({ profile: { ...s.profile, ...updates } })),
 
       _recompute: () => set((s) => ({ ...s })),
     }),
@@ -280,6 +294,7 @@ export const useStudyStore = create<StudyStoreState>()(
         seenAch: s.seenAch,
         meta: s.meta,
         settings: s.settings,
+        profile: s.profile,
       }),
       version: 1,
       migrate: (persisted: unknown) => {
@@ -292,6 +307,7 @@ export const useStudyStore = create<StudyStoreState>()(
           seenAch: p.seenAch || [],
           meta: p.meta || { created: Date.now() },
           settings: { ...DEFAULT_SETTINGS, ...(p.settings || {}) },
+          profile: { ...DEFAULT_PROFILE, ...(p.profile || {}) },
         } as Partial<StudyStoreState>;
       },
     },

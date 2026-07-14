@@ -135,7 +135,7 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
               </div>
             )}
 
-            {/* Dark Red Warning Banner */}
+             {/* Dark Red Warning Banner */}
             <div className="rounded-lg border border-red-950 bg-red-950/20 p-3 text-red-600 dark:text-red-400">
               <div className="flex gap-2">
                 <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
@@ -143,6 +143,20 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
                   WARNING: This database is stored locally in your browser cache. If you forget your password, your account cannot be recovered and your progress will be gone permanently.
                 </div>
               </div>
+            </div>
+
+            {/* Data Collection Notice */}
+            <div className="rounded-lg border border-border/40 bg-muted/30 p-3 text-muted-foreground">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-foreground mb-1">
+                Data Collection Notice
+              </div>
+              <ul className="list-disc pl-4 text-[10px] space-y-0.5 leading-normal">
+                <li><strong>Local Cache:</strong> Stored locally on this browser via localStorage.</li>
+                <li><strong>Credentials:</strong> Stores Username and Password (plaintext check locally) for secure log-in.</li>
+                <li><strong>Progress:</strong> Tracks study sessions, time elapsed, completed items, stars.</li>
+                <li><strong>Notes:</strong> Saves your customized study notes per topic.</li>
+                <li><strong>Profile:</strong> Remembers your avatar, custom titles, and goals.</li>
+              </ul>
             </div>
 
             <Button type="submit" className="w-full h-10 font-bold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/10">

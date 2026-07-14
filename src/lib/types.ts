@@ -77,6 +77,12 @@ export interface Settings {
   celebrate: boolean;
 }
 
+export interface Profile {
+  avatar: string;
+  customTitle: string;
+  motto: string;
+}
+
 export interface PersistedState {
   progress: Record<string, TopicProgress>;
   daily: Record<string, number>;
@@ -84,6 +90,7 @@ export interface PersistedState {
   settings: Settings;
   seenAch: string[];
   meta: { created: number };
+  profile?: Profile;
 }
 
 /* ---------------- Derived / computed types ---------------- */
