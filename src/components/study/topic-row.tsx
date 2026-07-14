@@ -8,6 +8,7 @@ import type { Topic } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { fmtDuration } from "@/lib/format";
 import { DifficultyBadge } from "./difficulty-badge";
+import { NotesButton } from "./notes-viewer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -123,6 +124,8 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
       {/* actions */}
       <div className="flex shrink-0 items-center gap-0.5">
         <TooltipProvider delayDuration={300}>
+          <NotesButton topic={topic} />
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -130,12 +133,12 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
                 size="icon"
                 className="h-7 w-7"
                 onClick={() => setNotesOpen((o) => !o)}
-                aria-label="Toggle notes"
+                aria-label="Toggle my notes"
               >
                 <StickyNote className={cn("h-3.5 w-3.5", notesOpen && "text-primary")} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Notes</TooltipContent>
+            <TooltipContent>My notes</TooltipContent>
           </Tooltip>
 
           <Tooltip>
