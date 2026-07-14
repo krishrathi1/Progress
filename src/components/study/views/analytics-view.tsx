@@ -521,7 +521,7 @@ function MiniStat({ icon, label, value, accent }: { icon: React.ReactNode; label
         </span>
         <div className="min-w-0">
           <div className="text-2xl font-black leading-none tracking-tight tabular-nums">{value}</div>
-          <div className="mt-1.5 truncate text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          <div className="mt-1.5 whitespace-normal text-[9px] font-semibold uppercase leading-tight tracking-normal text-muted-foreground sm:text-[10px]">
             {label}
           </div>
         </div>
