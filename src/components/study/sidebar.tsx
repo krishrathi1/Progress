@@ -34,7 +34,7 @@ interface SidebarProps {
 
 function SidebarInner({ route, navigate, onOpenPalette }: SidebarProps) {
   // subscribe to progress so the sidebar re-renders when progress changes
-  const progress = useStudyStore((s) => s.progress);
+  useStudyStore((s) => s.progress);
 
   const isActive = (view: Route["view"], subjectId?: string) => {
     if (route.view !== view) return false;
@@ -134,12 +134,6 @@ function SidebarInner({ route, navigate, onOpenPalette }: SidebarProps) {
           );
         })}
       </nav>
-
-      {/* Footer */}
-      <div className="border-t px-4 py-3 text-[10px] text-muted-foreground">
-        <div>Local-first · press <kbd className="rounded border bg-muted px-1 py-0.5 font-mono">?</kbd> for shortcuts</div>
-        <div className="mt-0.5 opacity-70">v3 · Striver A2Z + GFG · {Object.keys(progress).length} topics tracked</div>
-      </div>
     </div>
   );
 }
