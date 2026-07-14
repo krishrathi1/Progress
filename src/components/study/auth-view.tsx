@@ -14,8 +14,9 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const cleanUsername = username.trim().toLowerCase();
@@ -24,47 +25,87 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
       return;
     }
 
-    const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
+    if (isSignUp && password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
 
-    if (isSignUp) {
-      if (password !== confirmPassword) {
-        toast.error("Passwords do not match.");
-        return;
-      }
-      if (accounts[cleanUsername]) {
-        toast.error("Username is already taken.");
-        return;
+    setLoading(true);
+    const endpoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: cleanUsername, password }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Request failed.");
       }
 
-      // Create new account with default empty state
-      accounts[cleanUsername] = {
-        password: password, // In local-first client database, simple password check is sufficient
-        data: {
-          progress: {},
-          daily: {},
-          seenAch: [],
-          meta: { created: Date.now() },
-          settings: {
-            dailyGoalMin: 120,
-            pomoFocus: 25,
-            pomoBreak: 5,
-            celebrate: true,
-          }
+      toast.success(isSignUp ? "Account created online!" : `Welcome back, ${username}!`);
+      
+      // Save data locally too for offline resilience
+      if (result.data) {
+        const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
+        accounts[cleanUsername] = { password, data: result.data };
+        localStorage.setItem("studytracker.accounts", JSON.stringify(accounts));
+      }
+
+      onLogin(cleanUsername);
+    } catch (err: any) {
+      console.warn("Neon Database failed, falling back to local database:", err.message);
+      
+      // FALLBACK TO LOCALSTORAGE
+      const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
+
+      if (isSignUp) {
+        if (accounts[cleanUsername]) {
+          toast.error("Username is already taken locally.");
+          setLoading(false);
+          return;
         }
-      };
 
-      localStorage.setItem("studytracker.accounts", JSON.stringify(accounts));
-      toast.success("Account created successfully!");
-      onLogin(cleanUsername);
-    } else {
-      const userAcc = accounts[cleanUsername];
-      if (!userAcc || userAcc.password !== password) {
-        toast.error("Invalid username or password.");
-        return;
+        accounts[cleanUsername] = {
+          password: password,
+          data: {
+            progress: {},
+            daily: {},
+            seenAch: [],
+            meta: { created: Date.now() },
+            settings: {
+              dailyGoalMin: 120,
+              pomoFocus: 25,
+              pomoBreak: 5,
+              celebrate: true,
+            },
+            profile: {
+              avatar: "grad-1",
+              customTitle: "Novice Learner",
+              motto: "Consistency is key.",
+            }
+          }
+        };
+
+        localStorage.setItem("studytracker.accounts", JSON.stringify(accounts));
+        toast.warning("Online database unavailable. Created account locally!");
+        onLogin(cleanUsername);
+      } else {
+        const userAcc = accounts[cleanUsername];
+        if (!userAcc || userAcc.password !== password) {
+          toast.error("Invalid username or password (offline).");
+          setLoading(false);
+          return;
+        }
+
+        toast.warning("Online database offline. Logged in locally!");
+        onLogin(cleanUsername);
       }
-
-      toast.success(`Welcome back, ${username}!`);
-      onLogin(cleanUsername);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -151,16 +192,16 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
                 Data Collection Notice
               </div>
               <ul className="list-disc pl-4 text-[10px] space-y-0.5 leading-normal">
-                <li><strong>Local Cache:</strong> Stored locally on this browser via localStorage.</li>
-                <li><strong>Credentials:</strong> Stores Username and Password (plaintext check locally) for secure log-in.</li>
-                <li><strong>Progress:</strong> Tracks study sessions, time elapsed, completed items, stars.</li>
-                <li><strong>Notes:</strong> Saves your customized study notes per topic.</li>
-                <li><strong>Profile:</strong> Remembers your avatar, custom titles, and goals.</li>
+                <li><strong>Cloud Sync:</strong> Stored securely in our online Neon PostgreSQL cloud database to sync across all your devices.</li>
+                <li><strong>Offline Resilience:</strong> Caches progress locally in your browser so you can study offline.</li>
+                <li><strong>Credentials:</strong> Stores Username and Password (securely compared) for your account login.</li>
+                <li><strong>Progress:</strong> Tracks study sessions, times completed, stars, and XP level.</li>
+                <li><strong>Notes & Profile:</strong> Saves your custom study notes, avatar, title, and study goals.</li>
               </ul>
             </div>
 
-            <Button type="submit" className="w-full h-10 font-bold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/10">
-              {isSignUp ? "Sign Up" : "Sign In"}
+             <Button type="submit" disabled={loading} className="w-full h-10 font-bold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/10 cursor-pointer disabled:opacity-50">
+              {loading ? "Connecting..." : (isSignUp ? "Sign Up" : "Sign In")}
             </Button>
           </form>
         </CardContent>

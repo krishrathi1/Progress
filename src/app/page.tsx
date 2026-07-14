@@ -40,21 +40,10 @@ export default function Home() {
             pomoBreak: 5,
             celebrate: true,
           },
-        });
-      });
-    } else {
-      // Initialize with fresh default state for new account
-      import("@/lib/store").then(({ useStudyStore }) => {
-        useStudyStore.setState({
-          progress: {},
-          daily: {},
-          seenAch: [],
-          meta: { created: Date.now() },
-          settings: {
-            dailyGoalMin: 120,
-            pomoFocus: 25,
-            pomoBreak: 5,
-            celebrate: true,
+          profile: userData.profile || {
+            avatar: "grad-1",
+            customTitle: "Novice Learner",
+            motto: "Consistency is key.",
           },
         });
       });
@@ -74,41 +63,79 @@ export default function Home() {
             seenAch: state.seenAch,
             meta: state.meta,
             settings: state.settings,
+            profile: state.profile,
           };
           localStorage.setItem("studytracker.accounts", JSON.stringify(accounts));
         }
+
+        // Instantly push final sync state to database
+        fetch("/api/auth/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: active,
+            data: accounts[active].data,
+          }),
+        }).catch((err) => console.warn("Logout sync failed:", err.message));
       });
     }
     localStorage.removeItem("studytracker.currentUser");
     setUser(null);
   };
 
-  // Auto-save store updates to accounts database
+  // Auto-save store updates to Neon online database (debounced to 3s)
   React.useEffect(() => {
     if (!user) return;
 
     let unsubscribe: () => void;
+    let timeoutId: NodeJS.Timeout;
+
     import("@/lib/store").then(({ useStudyStore }) => {
       unsubscribe = useStudyStore.subscribe((state) => {
         const active = localStorage.getItem("studytracker.currentUser");
-        if (active) {
-          const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
-          if (accounts[active]) {
-            accounts[active].data = {
-              progress: state.progress,
-              daily: state.daily,
-              seenAch: state.seenAch,
-              meta: state.meta,
-              settings: state.settings,
-            };
-            localStorage.setItem("studytracker.accounts", JSON.stringify(accounts));
-          }
+        if (!active) return;
+
+        // 1) Save locally instantly for offline resilience
+        const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
+        if (accounts[active]) {
+          accounts[active].data = {
+            progress: state.progress,
+            daily: state.daily,
+            seenAch: state.seenAch,
+            meta: state.meta,
+            settings: state.settings,
+            profile: state.profile,
+          };
+          localStorage.setItem("studytracker.accounts", JSON.stringify(accounts));
         }
+
+        // 2) Debounce network syncing to online database
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          fetch("/api/auth/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username: active,
+              data: {
+                progress: state.progress,
+                daily: state.daily,
+                seenAch: state.seenAch,
+                meta: state.meta,
+                settings: state.settings,
+                profile: state.profile,
+              },
+            }),
+          }).catch((err) => {
+            console.warn("Auto-sync to Neon failed (offline):", err.message);
+          });
+        }, 3000);
       });
     });
 
     return () => {
       if (unsubscribe) unsubscribe();
+      clearTimeout(timeoutId);
     };
   }, [user]);
 
