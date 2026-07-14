@@ -143,5 +143,5 @@ export default function Home() {
     return <AuthView onLogin={handleLogin} />;
   }
 
-  return <AppShell onLogout={handleLogout} />;
+  return <AppShell onLogout={handleLogout} currentUser={user} />;
 }

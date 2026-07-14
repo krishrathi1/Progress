@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 export type Route =
   | { view: "dashboard" }
   | { view: "analytics" }
+  | { view: "leaderboard" }
   | { view: "achievements" }
   | { view: "data" }
   | { view: "track"; subjectId: string }
@@ -14,6 +15,7 @@ function parseHash(hash: string): Route {
   const h = hash.replace(/^#\/?/, "");
   if (!h || h === "dashboard") return { view: "dashboard" };
   if (h === "analytics") return { view: "analytics" };
+  if (h === "leaderboard") return { view: "leaderboard" };
   if (h === "achievements") return { view: "achievements" };
   if (h === "data") return { view: "data" };
   const parts = h.split("/");
@@ -28,6 +30,8 @@ export function routeToHash(route: Route): string {
       return "#/dashboard";
     case "analytics":
       return "#/analytics";
+    case "leaderboard":
+      return "#/leaderboard";
     case "achievements":
       return "#/achievements";
     case "data":

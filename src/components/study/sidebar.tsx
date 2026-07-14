@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   LineChart,
   Trophy,
+  Crown,
   Database,
   Search,
   GraduationCap,
@@ -22,6 +23,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const NAV_ITEMS: { view: Route["view"]; label: string; icon: React.ReactNode }[] = [
   { view: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="h-4 w-4" /> },
   { view: "analytics", label: "Analytics", icon: <LineChart className="h-4 w-4" /> },
+  { view: "leaderboard", label: "Leaderboard", icon: <Crown className="h-4 w-4" /> },
   { view: "achievements", label: "Achievements", icon: <Trophy className="h-4 w-4" /> },
   { view: "data", label: "Data & Settings", icon: <Database className="h-4 w-4" /> },
 ];

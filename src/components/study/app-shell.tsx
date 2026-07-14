@@ -16,6 +16,7 @@ import { TrackView } from "./views/track-view";
 import { AnalyticsView } from "./views/analytics-view";
 import { AchievementsView } from "./views/achievements-view";
 import { DataView } from "./views/data-view";
+import { LeaderboardView } from "./views/leaderboard-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LogOut } from "lucide-react";
 import { ProfileButton } from "./profile-button";
@@ -23,11 +24,12 @@ import { ProfileButton } from "./profile-button";
 const VIEW_TITLES: Record<string, string> = {
   dashboard: "Dashboard",
   analytics: "Analytics",
+  leaderboard: "Leaderboard",
   achievements: "Achievements",
   data: "Data & Settings",
 };
 
-export function AppShell({ onLogout }: { onLogout: () => void }) {
+export function AppShell({ onLogout, currentUser }: { onLogout: () => void; currentUser: string }) {
   const [route, navigate] = useHashRoute();
   const [paletteOpen, setPaletteOpen] = React.useState(false);
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
@@ -62,6 +64,7 @@ export function AppShell({ onLogout }: { onLogout: () => void }) {
           window.removeEventListener("keydown", handler);
           if (ev.key === "d") navigate({ view: "dashboard" });
           else if (ev.key === "a") navigate({ view: "analytics" });
+          else if (ev.key === "l") navigate({ view: "leaderboard" });
           else if (ev.key === "c") navigate({ view: "achievements" });
           else if (ev.key === "s") navigate({ view: "data" });
         };
@@ -154,7 +157,7 @@ export function AppShell({ onLogout }: { onLogout: () => void }) {
           className="st-scroll min-h-0 flex-1 overflow-y-auto px-3 py-4 md:px-6 md:py-6"
         >
           <div className={`mx-auto max-w-6xl ${activeTimer ? "pb-24" : "pb-6"}`}>
-            <ViewSwitch route={route} navigate={navigate} />
+            <ViewSwitch route={route} navigate={navigate} currentUser={currentUser} />
           </div>
         </main>
       </div>
@@ -177,15 +180,19 @@ export function AppShell({ onLogout }: { onLogout: () => void }) {
 function ViewSwitch({
   route,
   navigate,
+  currentUser,
 }: {
   route: Route;
   navigate: (r: Route) => void;
+  currentUser: string;
 }) {
   switch (route.view) {
     case "dashboard":
       return <DashboardView navigate={navigate} />;
     case "analytics":
       return <AnalyticsView />;
+    case "leaderboard":
+      return <LeaderboardView currentUser={currentUser} />;
     case "achievements":
       return <AchievementsView />;
     case "data":
