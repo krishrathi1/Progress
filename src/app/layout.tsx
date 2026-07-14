@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Bricolage_Grotesque, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/study/theme-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Body: warm, humanist sans. Display: characterful grotesk for headings/brand.
+const fontSans = Plus_Jakarta_Sans({
+  variable: "--font-sans-body",
+  subsets: ["latin"],
+});
+
+const fontDisplay = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
@@ -42,7 +48,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="h-screen overflow-hidden">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground h-screen overflow-hidden`}
+        className={`${fontSans.variable} ${fontDisplay.variable} ${geistMono.variable} antialiased bg-background text-foreground h-screen overflow-hidden`}
       >
         <ThemeProvider
           attribute="class"
