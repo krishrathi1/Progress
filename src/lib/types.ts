@@ -170,5 +170,3 @@ export interface Achievement {
   unlocked: boolean;
   progress: number;
 }
-
-export type ViewId = string; // "dashboard" | "analytics" | "achievements" | "data" | subjectId

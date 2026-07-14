@@ -1,12 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Menu, Search, GraduationCap, IconContext } from "@/lib/icons";
+import { Menu, GraduationCap, IconContext } from "@/lib/icons";
 import { useHashRoute, type Route } from "./use-hash-route";
 import { Sidebar, MobileSidebar } from "./sidebar";
 import { TimerBar } from "./timer-bar";
 import { FocusControl } from "./focus-control";
-import { CommandPalette } from "./command-palette";
 import { ThemeToggle } from "./theme-toggle";
 import { useStudyStore } from "@/lib/store";
 import { SUBJECT_MAP } from "@/lib/curriculum";
@@ -31,49 +30,8 @@ const VIEW_TITLES: Record<string, string> = {
 
 export function AppShell({ onLogout, currentUser }: { onLogout: () => void; currentUser: string }) {
   const [route, navigate] = useHashRoute();
-  const [paletteOpen, setPaletteOpen] = React.useState(false);
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
   const isMobile = useIsMobile();
-  const startTimer = useStudyStore((s) => s.startTimer);
-
-  // keyboard shortcuts
-  React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const typing =
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.isContentEditable;
-
-      // ⌘K / Ctrl+K — palette
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setPaletteOpen((o) => !o);
-        return;
-      }
-      if (typing) return;
-
-      if (e.key === "?") {
-        e.preventDefault();
-        toastShortcuts();
-      }
-      // quick nav
-      if (e.key === "g") {
-        // wait for second key — simple: g then d/a/c/s
-        const handler = (ev: KeyboardEvent) => {
-          window.removeEventListener("keydown", handler);
-          if (ev.key === "d") navigate({ view: "dashboard" });
-          else if (ev.key === "a") navigate({ view: "analytics" });
-          else if (ev.key === "l") navigate({ view: "leaderboard" });
-          else if (ev.key === "c") navigate({ view: "achievements" });
-          else if (ev.key === "s") navigate({ view: "data" });
-        };
-        window.addEventListener("keydown", handler, { once: true });
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [navigate]);
 
   const title =
     route.view === "track"
@@ -86,17 +44,13 @@ export function AppShell({ onLogout, currentUser }: { onLogout: () => void; curr
     <IconContext.Provider value={{ weight: "bold" }}>
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Desktop sidebar */}
-      <Sidebar route={route} navigate={navigate} onOpenPalette={() => setPaletteOpen(true)} />
+      <Sidebar route={route} navigate={navigate} />
 
       {/* Mobile sidebar (sheet) */}
       <MobileSidebar
         route={route}
         navigate={(r) => {
           navigate(r);
-          setMobileNavOpen(false);
-        }}
-        onOpenPalette={() => {
-          setPaletteOpen(true);
           setMobileNavOpen(false);
         }}
         open={mobileNavOpen}
@@ -128,15 +82,6 @@ export function AppShell({ onLogout, currentUser }: { onLogout: () => void; curr
           </div>
           <div className="ml-auto flex items-center gap-1.5">
             <FocusControl />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden h-9 w-9 sm:inline-flex"
-              onClick={() => setPaletteOpen(true)}
-              aria-label="Search"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
             <div className="hidden sm:block"><ThemeToggle /></div>
             <ProfileButton />
             <Button
@@ -165,13 +110,6 @@ export function AppShell({ onLogout, currentUser }: { onLogout: () => void; curr
       {/* Floating timer */}
       <TimerBar />
 
-      {/* Command palette */}
-      <CommandPalette
-        open={paletteOpen}
-        onOpenChange={setPaletteOpen}
-        navigate={navigate}
-        startTimer={startTimer}
-      />
     </div>
     </IconContext.Provider>
   );
@@ -202,20 +140,4 @@ function ViewSwitch({
     default:
       return <DashboardView navigate={navigate} />;
   }
-}
-
-function toastShortcuts() {
-  import("sonner").then(({ toast }) => {
-    toast.info("Keyboard shortcuts", {
-      description: [
-        "⌘K — Quick find (search topics)",
-        "g then d — Dashboard",
-        "g then a — Analytics",
-        "g then c — Achievements",
-        "g then s — Data & Settings",
-        "? — Show this help",
-      ].join("\n"),
-      duration: 6000,
-    });
-  });
 }

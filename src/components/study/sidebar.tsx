@@ -7,7 +7,6 @@ import {
   Trophy,
   Crown,
   Database,
-  Search,
   GraduationCap,
 } from "@/lib/icons";
 import { CURRICULUM } from "@/lib/curriculum";
@@ -16,7 +15,6 @@ import type { Route } from "./use-hash-route";
 import { cn } from "@/lib/utils";
 import { fmtPct } from "@/lib/format";
 import { ProgressRing } from "./progress-ring";
-import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -31,10 +29,9 @@ const NAV_ITEMS: { view: Route["view"]; label: string; icon: React.ReactNode }[]
 interface SidebarProps {
   route: Route;
   navigate: (r: Route) => void;
-  onOpenPalette: () => void;
 }
 
-function SidebarInner({ route, navigate, onOpenPalette }: SidebarProps) {
+function SidebarInner({ route, navigate }: SidebarProps) {
   // subscribe to progress so the sidebar re-renders when progress changes
   useStudyStore((s) => s.progress);
 
@@ -55,18 +52,6 @@ function SidebarInner({ route, navigate, onOpenPalette }: SidebarProps) {
           <div className="font-display truncate text-[15px] font-extrabold leading-none">Studytracker</div>
           <div className="mt-1 truncate text-[10.5px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Command center</div>
         </div>
-      </div>
-
-      {/* Quick find */}
-      <div className="px-3 pb-2">
-        <button
-          onClick={onOpenPalette}
-          className="flex w-full items-center gap-2 rounded-lg border border-input bg-muted/40 px-3 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-muted"
-        >
-          <Search className="h-3.5 w-3.5" />
-          <span className="flex-1">Quick find…</span>
-          <kbd className="rounded border bg-background px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd>
-        </button>
       </div>
 
       {/* Main nav */}
