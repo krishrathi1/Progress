@@ -44,7 +44,7 @@ export interface Subject {
   desc: string;
   source: string;
   /** Builds an external search/resource URL for a topic name. */
-  search: (name: string) => string;
+  search: (name: string, sectionName?: string) => string;
   sections: Section[];
   /** Computed total topic count (populated at load). */
   _total: number;

@@ -160,7 +160,7 @@ function NotesDialog({
               </div>
               {subject && (
                 <Button asChild variant="outline" size="sm" className="mt-1">
-                  <a href={subject.search(topic.name)} target="_blank" rel="noopener noreferrer">
+                  <a href={subject.search(topic.name, topic.sectionName)} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-1.5 h-3.5 w-3.5" />
                     Open on {subject.source}
                   </a>

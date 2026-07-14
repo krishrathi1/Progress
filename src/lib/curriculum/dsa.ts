@@ -6,8 +6,8 @@ import type { Subject } from "@/lib/types";
  *
  * Source: takeuforward.org (Striver's A2Z DSA Sheet).
  */
-const searchFn = (n: string) =>
-  `https://www.google.com/search?q=${encodeURIComponent("striver takeuforward " + n)}`;
+const searchFn = (name: string, sectionName?: string) =>
+  `/api/dsa-resource?title=${encodeURIComponent(name)}&section=${encodeURIComponent(sectionName || "")}`;
 
 export const dsaTrack: Subject = {
   id: "dsa",

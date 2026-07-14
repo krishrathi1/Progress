@@ -203,7 +203,7 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
                   asChild
                 >
                   <a
-                    href={subject.search(topic.name)}
+                    href={subject.search(topic.name, topic.sectionName)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Open resource"
