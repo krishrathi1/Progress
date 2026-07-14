@@ -4,7 +4,8 @@ import * as React from "react";
 import { Menu, Search, GraduationCap, IconContext } from "@/lib/icons";
 import { useHashRoute, type Route } from "./use-hash-route";
 import { Sidebar, MobileSidebar } from "./sidebar";
-import { TimerBar, TimerPill } from "./timer-bar";
+import { TimerBar } from "./timer-bar";
+import { FocusControl } from "./focus-control";
 import { CommandPalette } from "./command-palette";
 import { ThemeToggle } from "./theme-toggle";
 import { useStudyStore } from "@/lib/store";
@@ -77,7 +78,7 @@ export function AppShell() {
   const activeTimer = useStudyStore((s) => s.activeTimer);
 
   return (
-    <IconContext.Provider value={{ weight: "duotone" }}>
+    <IconContext.Provider value={{ weight: "bold" }}>
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Desktop sidebar */}
       <Sidebar route={route} navigate={navigate} onOpenPalette={() => setPaletteOpen(true)} />
@@ -121,7 +122,7 @@ export function AppShell() {
             <h1 className="truncate text-sm font-semibold md:text-base">{title}</h1>
           </div>
           <div className="ml-auto flex items-center gap-1.5">
-            <TimerPill />
+            <FocusControl />
             <Button
               variant="ghost"
               size="icon"

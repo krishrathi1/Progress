@@ -28,8 +28,6 @@ import {
   Timer,
   Target,
   Layers,
-  ChevronLeft,
-  ChevronRight,
 } from "@/lib/icons";
 import {
   useStudyStore,
@@ -113,8 +111,6 @@ export function AnalyticsView() {
   const daily = useStudyStore((s) => s.daily);
 
   const [range, setRange] = useState("30");
-  const [logPage, setLogPage] = useState(0);
-  const itemsPerPage = 8;
 
   const o = useMemo(() => overallStats(), [progress, daily]);
   const curStreak = useMemo(() => streak(), [daily]);
@@ -202,13 +198,6 @@ export function AnalyticsView() {
     for (const s of allSessions) secs[new Date(s.ts).getDay()] += s.dur;
     return names.map((name, i) => ({ name, minutes: Math.round(secs[i] / 60) }));
   }, [allSessions]);
-
-  const totalLogPages = Math.max(1, Math.ceil(allSessions.length / itemsPerPage));
-  const safePage = Math.min(logPage, totalLogPages - 1);
-  const paginatedLogs = useMemo(
-    () => allSessions.slice(safePage * itemsPerPage, safePage * itemsPerPage + itemsPerPage),
-    [allSessions, safePage],
-  );
 
   const hasAnyTime = o.seconds > 0;
 
@@ -414,38 +403,32 @@ export function AnalyticsView() {
               <div className="text-xs text-muted-foreground">Every completed focus session</div>
             </div>
           </div>
-          {totalLogPages > 1 && (
-            <div className="flex items-center gap-1.5">
-              <button disabled={safePage === 0} onClick={() => setLogPage((p) => Math.max(0, p - 1))} className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border bg-card text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40" aria-label="Previous page">
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <span className="text-[11px] font-bold tabular-nums text-muted-foreground">{safePage + 1} / {totalLogPages}</span>
-              <button disabled={safePage >= totalLogPages - 1} onClick={() => setLogPage((p) => Math.min(totalLogPages - 1, p + 1))} className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border bg-card text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40" aria-label="Next page">
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+          {allSessions.length > 0 && (
+            <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-bold tabular-nums text-muted-foreground">
+              {allSessions.length} session{allSessions.length === 1 ? "" : "s"}
+            </span>
           )}
         </CardHeader>
-        <CardContent className="pt-0">
+        <CardContent className="p-0">
           {allSessions.length === 0 ? (
             <div className="py-10 text-center text-xs text-muted-foreground">No focus sessions recorded yet. Start a timer on any topic to begin.</div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="st-scroll max-h-[360px] overflow-y-auto">
               <table className="w-full border-collapse text-left text-xs">
-                <thead>
+                <thead className="sticky top-0 z-10 bg-card/95 backdrop-blur">
                   <tr className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                    <th className="py-3 pr-4 font-semibold">Topic</th>
+                    <th className="py-3 pl-5 pr-4 font-semibold">Topic</th>
                     <th className="px-4 py-3 font-semibold">Track</th>
                     <th className="px-4 py-3 text-right font-semibold">Duration</th>
-                    <th className="py-3 pl-4 text-right font-semibold">When</th>
+                    <th className="py-3 pl-4 pr-5 text-right font-semibold">When</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
-                  {paginatedLogs.map((log, i) => {
+                  {allSessions.map((log, i) => {
                     const sub = SUBJECT_MAP[log.subjectId];
                     return (
                       <tr key={`${log.qid}-${log.ts}-${i}`} className="transition-colors hover:bg-muted/40">
-                        <td className="max-w-[200px] truncate py-3 pr-4 font-semibold text-foreground">{log.topicName}</td>
+                        <td className="max-w-[200px] truncate py-3 pl-5 pr-4 font-semibold text-foreground">{log.topicName}</td>
                         <td className="px-4 py-3">
                           <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-bold" style={{ backgroundColor: sub ? `color-mix(in oklch, ${sub.color} 12%, transparent)` : "var(--muted)", color: sub?.color ?? "var(--muted-foreground)" }}>
                             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: sub?.color ?? "var(--muted-foreground)" }} />
@@ -453,7 +436,7 @@ export function AnalyticsView() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right font-semibold tabular-nums text-muted-foreground">{fmtDuration(log.dur)}</td>
-                        <td className="py-3 pl-4 text-right font-medium tabular-nums text-muted-foreground">
+                        <td className="py-3 pl-4 pr-5 text-right font-medium tabular-nums text-muted-foreground">
                           {new Date(log.ts).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
                         </td>
                       </tr>

@@ -43,6 +43,12 @@ interface StudyStoreState extends PersistedState {
   stopTimer: () => number;
   stopAndComplete: () => void;
   extendPomodoro: () => void;
+  /** During a focus phase: log focus time and switch to a break. */
+  takeBreakNow: () => void;
+  /** During a break: return straight to a fresh focus phase (break not logged). */
+  backToFocus: () => void;
+  /** End an active break without logging it as study time. */
+  endBreak: () => void;
   resetSubject: (subId: string) => void;
   resetAll: () => void;
   importData: (json: string) => void;
@@ -195,6 +201,27 @@ export const useStudyStore = create<StudyStoreState>()(
         } else {
           set({ activeTimer: null });
         }
+      },
+
+      takeBreakNow: () => {
+        const t = get().activeTimer;
+        if (t?.mode === "pomodoro" && t.phase === "focus") get().extendPomodoro();
+      },
+
+      backToFocus: () => {
+        const t = get().activeTimer;
+        if (!t) return;
+        const now = Date.now();
+        const settings = get().settings;
+        // starting a fresh focus phase; a break in progress is intentionally not logged
+        set({
+          activeTimer: { qid: t.qid, start: now, mode: "pomodoro", phase: "focus", endsAt: now + settings.pomoFocus * 60_000 },
+        });
+      },
+
+      endBreak: () => {
+        const t = get().activeTimer;
+        if (t && t.phase === "break") set({ activeTimer: null });
       },
 
       resetSubject: (subId) =>
