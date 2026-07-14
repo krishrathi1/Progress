@@ -11,7 +11,7 @@ import {
   Database,
   Info,
   CheckCircle2,
-} from "lucide-react";
+} from "@/lib/icons";
 import { useStudyStore, overallStats, activeDays, streak } from "@/lib/store";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

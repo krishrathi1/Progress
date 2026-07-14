@@ -14,7 +14,7 @@ import {
   Crown,
   Check,
   Lock,
-} from "lucide-react";
+} from "@/lib/icons";
 import { achievements, gamification, overallStats } from "@/lib/store";
 import { useStudyStore } from "@/lib/store";
 import { Card, CardContent } from "@/components/ui/card";

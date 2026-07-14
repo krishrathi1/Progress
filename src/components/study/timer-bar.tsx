@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Play, Square, Check, X, Timer as TimerIcon } from "lucide-react";
+import { Play, Square, Check, X, Timer as TimerIcon } from "@/lib/icons";
 import { useStudyStore } from "@/lib/store";
 import { ITEM_INDEX, SUBJECT_MAP } from "@/lib/curriculum";
 import { useActiveTimerTick } from "./use-timer-tick";

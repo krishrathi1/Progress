@@ -10,7 +10,7 @@ import {
   Calendar,
   Zap,
   Target,
-} from "lucide-react";
+} from "@/lib/icons";
 import {
   useStudyStore,
   overallStats,

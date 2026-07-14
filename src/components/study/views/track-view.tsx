@@ -13,7 +13,7 @@ import {
   ChevronRight,
   CheckCheck,
   RotateCcw,
-} from "lucide-react";
+} from "@/lib/icons";
 import { useStudyStore, subjectStats, sectionStats } from "@/lib/store";
 import { SUBJECT_MAP, sectionTopics } from "@/lib/curriculum";
 import type { Route } from "../use-hash-route";
@@ -24,7 +24,6 @@ import { TopicRow } from "../topic-row";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Collapsible,
   CollapsibleContent,
@@ -171,24 +170,21 @@ export function TrackView({
             className="pl-9"
           />
         </div>
-        <ToggleGroup
-          type="single"
-          value={filter}
-          onValueChange={(v) => v && setFilter(v)}
-          className="gap-1.5 flex-wrap"
-        >
+        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filter topics">
           {FILTERS.map((f) => {
             const active = filter === f.value;
             return (
-              <ToggleGroupItem
+              <button
                 key={f.value}
-                value={f.value}
-                style={active ? { backgroundColor: sub.color } : {}}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter(f.value)}
+                style={active ? { backgroundColor: sub.color, borderColor: "transparent" } : undefined}
                 className={cn(
-                  "h-8 rounded-full px-3 text-xs font-semibold border transition-all cursor-pointer gap-1.5 shadow-none",
+                  "inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-xs font-semibold transition-colors",
                   active
-                    ? "text-white border-transparent font-bold"
-                    : "bg-background text-muted-foreground border-input hover:bg-muted hover:text-foreground"
+                    ? "text-white shadow-sm"
+                    : "border-input bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
                 {f.value === "doing" ? (
@@ -197,10 +193,10 @@ export function TrackView({
                   f.icon
                 )}
                 <span>{f.label}</span>
-              </ToggleGroupItem>
+              </button>
             );
           })}
-        </ToggleGroup>
+        </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground hover:text-destructive">

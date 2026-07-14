@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, Hash, ExternalLink, ArrowRight } from "lucide-react";
+import { Search, Hash, ExternalLink, ArrowRight } from "@/lib/icons";
 import {
   CommandDialog,
   CommandEmpty,

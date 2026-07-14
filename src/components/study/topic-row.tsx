@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, Star, Play, Square, ExternalLink, StickyNote, X } from "lucide-react";
+import { Check, Star, Play, Square, ExternalLink, StickyNote, X } from "@/lib/icons";
 import { useStudyStore } from "@/lib/store";
 import { ITEM_INDEX, SUBJECT_MAP } from "@/lib/curriculum";
 import type { Topic } from "@/lib/types";

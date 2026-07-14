@@ -29,7 +29,7 @@ import {
   Target,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
+} from "@/lib/icons";
 import {
   useStudyStore,
   overallStats,

@@ -8,7 +8,7 @@ import {
   Database,
   Search,
   GraduationCap,
-} from "lucide-react";
+} from "@/lib/icons";
 import { CURRICULUM } from "@/lib/curriculum";
 import { useStudyStore, subjectStats } from "@/lib/store";
 import type { Route } from "./use-hash-route";

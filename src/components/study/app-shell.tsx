@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Menu, Search, GraduationCap } from "lucide-react";
+import { Menu, Search, GraduationCap, IconContext } from "@/lib/icons";
 import { useHashRoute, type Route } from "./use-hash-route";
 import { Sidebar, MobileSidebar } from "./sidebar";
 import { TimerBar, TimerPill } from "./timer-bar";
@@ -77,6 +77,7 @@ export function AppShell() {
   const activeTimer = useStudyStore((s) => s.activeTimer);
 
   return (
+    <IconContext.Provider value={{ weight: "duotone" }}>
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Desktop sidebar */}
       <Sidebar route={route} navigate={navigate} onOpenPalette={() => setPaletteOpen(true)} />
@@ -156,6 +157,7 @@ export function AppShell() {
         startTimer={startTimer}
       />
     </div>
+    </IconContext.Provider>
   );
 }
 
