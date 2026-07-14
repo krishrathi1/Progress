@@ -43,7 +43,11 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Request failed.");
+        // An HTTP response means the server was reached. Show its real error
+        // instead of incorrectly treating validation/configuration failures as
+        // an offline database and creating a local-only account.
+        toast.error(result.error || `Server request failed (${res.status}).`);
+        return;
       }
 
       toast.success(isSignUp ? "Account created online!" : `Welcome back, ${username}!`);
@@ -57,7 +61,9 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
 
       onLogin(cleanUsername);
     } catch (err: any) {
-      console.warn("Neon Database failed, falling back to local database:", err.message);
+      // fetch only lands here when the server cannot be reached (or returned an
+      // invalid response), so local storage is appropriate as a true fallback.
+      console.warn("Server unreachable, falling back to local database:", err.message);
       
       // FALLBACK TO LOCALSTORAGE
       const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
@@ -176,12 +182,12 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
               </div>
             )}
 
-             {/* Dark Red Warning Banner */}
-            <div className="rounded-lg border border-red-950 bg-red-950/20 p-3 text-red-600 dark:text-red-400">
+            {/* Password recovery notice */}
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-700 dark:text-amber-400">
               <div className="flex gap-2">
                 <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                 <div className="text-[11px] font-semibold leading-normal">
-                  WARNING: This database is stored locally in your browser cache. If you forget your password, your account cannot be recovered and your progress will be gone permanently.
+                  If you forget your password, you will need to create a new account.
                 </div>
               </div>
             </div>

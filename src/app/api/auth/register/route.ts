@@ -3,6 +3,13 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: "Server database is not configured. Add DATABASE_URL in Vercel and redeploy." },
+        { status: 503 }
+      );
+    }
+
     const { username, password } = await request.json();
     const cleanUsername = username?.trim().toLowerCase();
 
