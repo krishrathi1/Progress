@@ -603,23 +603,41 @@ interface AchievementDef {
   prog: (s: { done: number; seconds: number; streak: number; longest: number; tracksStarted: number; tracksDone: number; goalPct: number }) => number;
 }
 
+/* Completion milestones scale to the ACTUAL curriculum size, so they always
+   stay meaningful (and "Completionist" == finishing every topic in the app). */
+export const TOTAL_TOPICS = CURRICULUM.reduce((n, s) => n + (s._total || 0), 0);
+export const TOTAL_TRACKS = CURRICULUM.length;
+const pctTopics = (f: number) => Math.max(1, Math.round(TOTAL_TOPICS * f));
+const M5 = pctTopics(0.05);
+const M25 = pctTopics(0.25);
+const M50 = pctTopics(0.5);
+const M75 = pctTopics(0.75);
+const M100 = TOTAL_TOPICS;
+
 const ACHIEVEMENTS: AchievementDef[] = [
+  // ---- completion milestones (scaled to total topics) ----
   { id: "first", name: "First Steps", desc: "Complete your first topic", icon: "flag", tier: "bronze", test: (s) => s.done >= 1, prog: (s) => Math.min(1, s.done / 1) },
-  { id: "ten", name: "Warming Up", desc: "Complete 10 topics", icon: "zap", tier: "bronze", test: (s) => s.done >= 10, prog: (s) => s.done / 10 },
-  { id: "fifty", name: "Half Century", desc: "Complete 50 topics", icon: "medal", tier: "silver", test: (s) => s.done >= 50, prog: (s) => s.done / 50 },
-  { id: "hundred", name: "Centurion", desc: "Complete 100 topics", icon: "medal", tier: "gold", test: (s) => s.done >= 100, prog: (s) => s.done / 100 },
-  { id: "grind", name: "The Grind", desc: "Complete 250 topics", icon: "trophy", tier: "gold", test: (s) => s.done >= 250, prog: (s) => s.done / 250 },
+  { id: "p5", name: "Warming Up", desc: `Complete ${M5} topics (5%)`, icon: "zap", tier: "bronze", test: (s) => s.done >= M5, prog: (s) => s.done / M5 },
+  { id: "p25", name: "Quarter Master", desc: `Complete ${M25} topics (25%)`, icon: "medal", tier: "silver", test: (s) => s.done >= M25, prog: (s) => s.done / M25 },
+  { id: "p50", name: "Halfway Hero", desc: `Complete ${M50} topics (50%)`, icon: "medal", tier: "gold", test: (s) => s.done >= M50, prog: (s) => s.done / M50 },
+  { id: "p75", name: "Home Stretch", desc: `Complete ${M75} topics (75%)`, icon: "trophy", tier: "gold", test: (s) => s.done >= M75, prog: (s) => s.done / M75 },
+  { id: "p100", name: "Completionist", desc: `Complete all ${M100} topics`, icon: "crown", tier: "gold", test: (s) => s.done >= M100, prog: (s) => s.done / M100 },
+  // ---- time invested ----
   { id: "h1", name: "In the Zone", desc: "Study for 1 hour total", icon: "clock", tier: "bronze", test: (s) => s.seconds >= 3600, prog: (s) => s.seconds / 3600 },
   { id: "h10", name: "Dedicated", desc: "Study for 10 hours total", icon: "clock", tier: "silver", test: (s) => s.seconds >= 36000, prog: (s) => s.seconds / 36000 },
   { id: "h50", name: "Marathoner", desc: "Study for 50 hours total", icon: "clock", tier: "gold", test: (s) => s.seconds >= 180000, prog: (s) => s.seconds / 180000 },
+  // ---- consistency ----
   { id: "s3", name: "On a Roll", desc: "3-day study streak", icon: "flame", tier: "bronze", test: (s) => s.streak >= 3, prog: (s) => s.streak / 3 },
   { id: "s7", name: "Week Warrior", desc: "7-day study streak", icon: "flame", tier: "silver", test: (s) => s.streak >= 7, prog: (s) => s.streak / 7 },
   { id: "s30", name: "Unstoppable", desc: "30-day study streak", icon: "flame", tier: "gold", test: (s) => s.streak >= 30, prog: (s) => s.streak / 30 },
   { id: "focus", name: "Deep Focus", desc: "A single 45-min session", icon: "target", tier: "silver", test: (s) => s.longest >= 2700, prog: (s) => s.longest / 2700 },
-  { id: "explorer", name: "Explorer", desc: "Start topics in 5 tracks", icon: "compass", tier: "bronze", test: (s) => s.tracksStarted >= 5, prog: (s) => s.tracksStarted / 5 },
-  { id: "polyglot", name: "Polyglot", desc: "Touch all 10 tracks", icon: "layers", tier: "silver", test: (s) => s.tracksStarted >= 10, prog: (s) => s.tracksStarted / 10 },
-  { id: "master", name: "Track Master", desc: "Finish an entire track", icon: "crown", tier: "gold", test: (s) => s.tracksDone >= 1, prog: (s) => Math.min(1, s.tracksDone / 1) },
-  { id: "goal", name: "Goal Getter", desc: "Hit your daily goal", icon: "check", tier: "bronze", test: (s) => s.goalPct >= 1, prog: (s) => s.goalPct },
+  // ---- breadth across tracks ----
+  { id: "explorer", name: "Explorer", desc: `Start topics in 5 of ${TOTAL_TRACKS} tracks`, icon: "compass", tier: "bronze", test: (s) => s.tracksStarted >= 5, prog: (s) => s.tracksStarted / 5 },
+  { id: "polyglot", name: "Polyglot", desc: `Touch all ${TOTAL_TRACKS} tracks`, icon: "layers", tier: "silver", test: (s) => s.tracksStarted >= TOTAL_TRACKS, prog: (s) => s.tracksStarted / TOTAL_TRACKS },
+  { id: "master", name: "Track Master", desc: "Fully complete any one track", icon: "crown", tier: "gold", test: (s) => s.tracksDone >= 1, prog: (s) => Math.min(1, s.tracksDone / 1) },
+  { id: "allTracks", name: "Grand Slam", desc: `Complete all ${TOTAL_TRACKS} tracks`, icon: "trophy", tier: "gold", test: (s) => s.tracksDone >= TOTAL_TRACKS, prog: (s) => s.tracksDone / TOTAL_TRACKS },
+  // ---- habit ----
+  { id: "goal", name: "Goal Getter", desc: "Hit your daily study goal", icon: "check", tier: "bronze", test: (s) => s.goalPct >= 1, prog: (s) => s.goalPct },
 ];
 
 export function achievements() {
