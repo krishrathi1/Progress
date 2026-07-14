@@ -8,8 +8,7 @@ import {
   Clock,
   CheckCircle2,
   Circle,
-  Loader,
-  ExternalLink,
+  Loader2,
   ChevronDown,
   ChevronRight,
   CheckCheck,
@@ -48,7 +47,7 @@ import { toast } from "sonner";
 const FILTERS: { value: TopicStatus | "starred" | "all"; label: string; icon: React.ReactNode }[] = [
   { value: "all", label: "All", icon: <Circle className="h-3.5 w-3.5" /> },
   { value: "todo", label: "To do", icon: <Circle className="h-3.5 w-3.5" /> },
-  { value: "doing", label: "In progress", icon: <Loader className="h-3.5 w-3.5" /> },
+  { value: "doing", label: "In progress", icon: <Loader2 className="h-3.5 w-3.5 animate-spin" /> },
   { value: "done", label: "Done", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
   { value: "starred", label: "Starred", icon: <Star className="h-3.5 w-3.5" /> },
 ];
@@ -111,10 +110,6 @@ export function TrackView({
         </Button>
 
         <Card className="overflow-hidden">
-          <div
-            className="h-1.5 w-full"
-            style={{ backgroundColor: sub.color }}
-          />
           <CardContent className="p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="flex items-start gap-4">
@@ -139,7 +134,7 @@ export function TrackView({
                   <p className="mt-1 max-w-xl text-sm text-muted-foreground">{sub.desc}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {stats.done}/{stats.total} done</span>
-                    <span className="flex items-center gap-1"><Loader className="h-3.5 w-3.5 text-amber-500" /> {stats.doing} in progress</span>
+                    <span className="flex items-center gap-1"><Loader2 className="h-3.5 w-3.5 text-amber-500" /> {stats.doing} in progress</span>
                     <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 text-amber-400" /> {stats.starred} starred</span>
                     <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-cyan-500" /> {fmtDuration(stats.seconds)}</span>
                     <span>· source: {sub.source}</span>
@@ -180,15 +175,31 @@ export function TrackView({
           type="single"
           value={filter}
           onValueChange={(v) => v && setFilter(v)}
-          variant="outline"
-          size="sm"
+          className="gap-1.5 flex-wrap"
         >
-          {FILTERS.map((f) => (
-            <ToggleGroupItem key={f.value} value={f.value} className="gap-1 text-xs">
-              {f.icon}
-              <span className="hidden sm:inline">{f.label}</span>
-            </ToggleGroupItem>
-          ))}
+          {FILTERS.map((f) => {
+            const active = filter === f.value;
+            return (
+              <ToggleGroupItem
+                key={f.value}
+                value={f.value}
+                style={active ? { backgroundColor: sub.color } : {}}
+                className={cn(
+                  "h-8 rounded-full px-3 text-xs font-semibold border transition-all cursor-pointer gap-1.5 shadow-none",
+                  active
+                    ? "text-white border-transparent font-bold"
+                    : "bg-background text-muted-foreground border-input hover:bg-muted hover:text-foreground"
+                )}
+              >
+                {f.value === "doing" ? (
+                  <Loader2 className={cn("h-3.5 w-3.5", active && "animate-spin")} />
+                ) : (
+                  f.icon
+                )}
+                <span>{f.label}</span>
+              </ToggleGroupItem>
+            );
+          })}
         </ToggleGroup>
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -240,7 +251,7 @@ export function TrackView({
             >
               <Card className="overflow-hidden">
                 <CollapsibleTrigger asChild>
-                  <button className="flex w-full items-center gap-3 p-3 text-left hover:bg-muted/40">
+                  <div className="flex w-full items-center gap-3 p-3 text-left hover:bg-muted/40 cursor-pointer select-none">
                     {isOpen || hasActiveFilter ? (
                       <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     ) : (
@@ -276,7 +287,7 @@ export function TrackView({
                     >
                       <CheckCheck className="mr-1 h-3 w-3" /> All done
                     </Button>
-                  </button>
+                  </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="st-scroll max-h-[480px] overflow-y-auto border-t px-2 py-2">

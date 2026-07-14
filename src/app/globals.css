@@ -185,3 +185,39 @@
 .tier-gold { box-shadow: 0 0 0 1px color-mix(in oklch, #f59e0b 50%, transparent), 0 8px 24px -8px color-mix(in oklch, #f59e0b 45%, transparent); }
 .tier-silver { box-shadow: 0 0 0 1px color-mix(in oklch, #94a3b8 45%, transparent), 0 8px 24px -8px color-mix(in oklch, #94a3b8 35%, transparent); }
 .tier-bronze { box-shadow: 0 0 0 1px color-mix(in oklch, #b45309 45%, transparent), 0 8px 24px -8px color-mix(in oklch, #b45309 35%, transparent); }
+
+/* Premium UI/UX additions */
+.premium-card-hover {
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.premium-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.dark .premium-card-hover:hover {
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.premium-glow {
+  position: relative;
+}
+.premium-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), transparent 60%);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+.dark .premium-glow::before {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), transparent 70%);
+}
+
+/* Enforce system Arial/Helvetica on all Recharts SVG text to prevent Turbopack/NextJS font subsetting bugs */
+.recharts-text {
+  font-family: Arial, Helvetica, sans-serif !important;
+}

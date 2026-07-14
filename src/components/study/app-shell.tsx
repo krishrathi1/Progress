@@ -74,6 +74,8 @@ export function AppShell() {
       ? SUBJECT_MAP[route.subjectId]?.name ?? "Track"
       : VIEW_TITLES[route.view] ?? "StudyTracker";
 
+  const activeTimer = useStudyStore((s) => s.activeTimer);
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Desktop sidebar */}
@@ -137,7 +139,7 @@ export function AppShell() {
           id="main-scroll"
           className="st-scroll min-h-0 flex-1 overflow-y-auto px-3 py-4 md:px-6 md:py-6"
         >
-          <div className="mx-auto max-w-6xl pb-24">
+          <div className={`mx-auto max-w-6xl ${activeTimer ? "pb-24" : "pb-6"}`}>
             <ViewSwitch route={route} navigate={navigate} />
           </div>
         </main>

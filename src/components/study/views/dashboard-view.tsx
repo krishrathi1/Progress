@@ -34,6 +34,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
   // subscribe so it re-renders on progress changes
@@ -64,29 +65,29 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
       {/* Hero row: level + daily goal + overall */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Level card */}
-        <Card className="relative overflow-hidden border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card">
+        <Card className="relative overflow-hidden border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card premium-card-hover premium-glow">
           <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-amber-500/10 blur-2xl" />
           <CardContent className="relative p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <div className="text-[11px] font-medium uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                   Level {game.level} · {game.title}
                 </div>
-                <div className="mt-1 text-2xl font-bold tabular-nums">
+                <div className="mt-1 text-2xl font-black tracking-tight tabular-nums bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
                   {game.xp.toLocaleString()} XP
                 </div>
               </div>
               <ProgressRing value={game.pct} size={56} stroke={5} color="#f59e0b">
-                <span className="text-sm font-bold">{game.level}</span>
+                <span className="text-sm font-black">{game.level}</span>
               </ProgressRing>
             </div>
             <div className="mt-3">
-              <div className="mb-1 flex justify-between text-[11px] text-muted-foreground">
+              <div className="mb-1 flex justify-between text-[11px] font-medium text-muted-foreground">
                 <span>{game.floor.toLocaleString()}</span>
                 <span>{game.next.toLocaleString()}</span>
               </div>
-              <Progress value={game.pct * 100} className="h-1.5" />
-              <div className="mt-1 text-[11px] text-muted-foreground">
+              <Progress value={game.pct * 100} className="h-1.5 [&>div]:bg-amber-500" />
+              <div className="mt-1 text-[11px] font-medium text-muted-foreground">
                 {Math.max(0, game.next - game.xp).toLocaleString()} XP to level {game.level + 1}
               </div>
             </div>
@@ -94,27 +95,35 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         </Card>
 
         {/* Daily goal card */}
-        <Card>
+        <Card className={cn(
+          "premium-card-hover transition-all duration-300",
+          goal >= 1 && "border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-card"
+        )}>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                <div className={cn(
+                  "text-[11px] font-bold uppercase tracking-wider",
+                  goal >= 1 ? "text-emerald-500" : "text-muted-foreground"
+                )}>
                   Today
                 </div>
-                <div className="mt-1 text-2xl font-bold tabular-nums">
+                <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">
                   {fmtDurationLong(todaySec)}
                 </div>
-                <div className="text-[11px] text-muted-foreground">
+                <div className="text-[11px] font-medium text-muted-foreground">
                   goal: {goalMin} min
                 </div>
               </div>
-              <ProgressRing value={goal} size={56} stroke={5} color="#22c55e">
-                <span className="text-xs font-bold">{fmtPct(goal)}</span>
+              <ProgressRing value={goal} size={56} stroke={5} color={goal >= 1 ? "#10b981" : "#22c55e"}>
+                <span className="text-xs font-black" style={{ color: goal >= 1 ? "#10b981" : "#22c55e" }}>
+                  {fmtPct(goal)}
+                </span>
               </ProgressRing>
             </div>
             <div className="mt-3">
-              <Progress value={goal * 100} className="h-1.5" />
-              <div className="mt-1 text-[11px] text-muted-foreground">
+              <Progress value={goal * 100} className={cn("h-1.5", goal >= 1 && "[&>div]:bg-emerald-500")} />
+              <div className="mt-1 text-[11px] font-medium text-muted-foreground">
                 {goal >= 1
                   ? "Daily goal reached!"
                   : `${fmtDuration(Math.max(0, goalMin * 60 - todaySec))} to go`}
@@ -124,24 +133,24 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         </Card>
 
         {/* Overall progress card */}
-        <Card>
+        <Card className="premium-card-hover border-violet-500/10 bg-gradient-to-br from-violet-500/5 via-card to-card">
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-violet-500">
                   Overall progress
                 </div>
-                <div className="mt-1 text-2xl font-bold tabular-nums">
+                <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">
                   {o.done}
                   <span className="text-base font-normal text-muted-foreground">/{o.total}</span>
                 </div>
-                <div className="text-[11px] text-muted-foreground">topics completed</div>
+                <div className="text-[11px] font-medium text-muted-foreground">topics completed</div>
               </div>
               <ProgressRing value={o.pct} size={56} stroke={5} color="var(--primary)">
-                <span className="text-xs font-bold">{fmtPct(o.pct)}</span>
+                <span className="text-xs font-black">{fmtPct(o.pct)}</span>
               </ProgressRing>
             </div>
-            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-semibold text-muted-foreground">
               <span>{o.doing} in progress</span>
               <span>·</span>
               <span>{o.starred} starred</span>
@@ -169,7 +178,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
               Continue where you left off
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
+          <CardContent className="max-h-[230px] overflow-y-auto st-scroll pr-1.5 space-y-1">
             {next.length === 0 ? (
               <EmptyHint text="Start a track to see your next topics here." />
             ) : (
@@ -197,7 +206,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
               )}
             </div>
           </CardHeader>
-          <CardContent className="space-y-1">
+          <CardContent className="max-h-[230px] overflow-y-auto st-scroll pr-1.5 space-y-1">
             {recent.length === 0 ? (
               <EmptyHint text="Your study sessions will appear here." />
             ) : (
@@ -236,7 +245,6 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
               <Calendar className="h-4 w-4 text-emerald-500" />
               Activity heatmap
             </CardTitle>
-            <span className="text-xs font-normal text-muted-foreground">last 26 weeks</span>
           </div>
         </CardHeader>
         <CardContent>
@@ -257,7 +265,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
             </span>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-h-[235px] overflow-y-auto st-scroll pr-1.5">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {CURRICULUM.map((sub) => {
               const s = o.bySubject.find((b) => b.id === sub.id)!;
@@ -315,7 +323,7 @@ function StatTile({
   accent: string;
 }) {
   return (
-    <Card>
+    <Card className="premium-card-hover">
       <CardContent className="flex items-center gap-3 p-4">
         <div
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"

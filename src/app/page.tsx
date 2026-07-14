@@ -1,6 +1,11 @@
 "use client";
 
-import { AppShell } from "@/components/study/app-shell";
+import dynamic from "next/dynamic";
+
+const AppShell = dynamic(
+  () => import("@/components/study/app-shell").then((m) => m.AppShell),
+  { ssr: false }
+);
 
 export default function Home() {
   return <AppShell />;
