@@ -572,13 +572,32 @@ export function upNext(limit = 6) {
   });
   doing.sort((a, b) => b.last - a.last);
   if (doing.length >= limit) return doing.slice(0, limit);
+
+  // A brand-new account must stay visually empty. Previously this function
+  // filled the card with the first DSA topics even when the user had never
+  // touched them, which looked like progress inherited from another account.
+  const started = new Set<string>();
+  Object.keys(state.progress).forEach((qid) => {
+    const progress = state.progress[qid];
+    const topic = ITEM_INDEX[qid];
+    if (!topic) return;
+    if (
+      progress.status !== "todo" ||
+      progress.seconds > 0 ||
+      progress.starred ||
+      Boolean(progress.notes)
+    ) {
+      started.add(topic.subjectId);
+    }
+  });
+  if (started.size === 0) return [];
+
   // fill with first not-started items from started tracks
-  const started = new Set(doing.map((d) => d.subjectId));
   for (const topic of ITEM_INDEX ? Object.values(ITEM_INDEX) : []) {
     if (doing.length >= limit) break;
     const p = state.progress[topic.qid];
     if (!p || p.status === "todo") {
-      if (started.has(topic.subjectId) || started.size === 0) {
+      if (started.has(topic.subjectId)) {
         doing.push({
           qid: topic.qid,
           last: 0,
