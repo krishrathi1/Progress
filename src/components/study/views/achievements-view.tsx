@@ -61,8 +61,7 @@ export function AchievementsView() {
   return (
     <div className="st-fade-in space-y-5">
       {/* Hero */}
-      <Card className="relative overflow-hidden border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-amber-500/10 blur-3xl" />
+      <Card className="relative overflow-hidden border-amber-500/30">
         <CardContent className="relative flex flex-wrap items-center justify-between gap-6 p-6">
           <div className="flex items-center gap-4">
             <ProgressRing value={unlocked.length / all.length} size={72} stroke={6} color="#f59e0b">

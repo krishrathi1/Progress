@@ -45,12 +45,12 @@ function SidebarInner({ route, navigate }: SidebarProps) {
     <div className="flex h-full flex-col">
       {/* Brand */}
       <div className="flex items-center gap-2.5 px-4 py-4">
-        <div className="flex h-9 w-9 rotate-[-3deg] items-center justify-center rounded-[11px] bg-gradient-to-br from-amber-400 to-orange-600 text-white shadow-[0_4px_12px_-2px_rgba(234,88,12,0.5)] ring-1 ring-inset ring-white/20">
+        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-amber-500 text-white">
           <GraduationCap className="h-5 w-5" />
         </div>
         <div className="min-w-0">
           <div className="font-display truncate text-[15px] font-extrabold leading-none">Studytracker</div>
-          <div className="mt-1 truncate text-[10.5px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Command center</div>
+          <div className="mt-1 truncate text-[10.5px] font-medium text-muted-foreground">Learning dashboard</div>
         </div>
       </div>
 

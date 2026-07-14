@@ -74,7 +74,7 @@ export function AppShell({ onLogout, currentUser }: { onLogout: () => void; curr
           )}
           <div className="min-w-0 flex items-center gap-2">
             {isMobile && (
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500 text-white">
                 <GraduationCap className="h-4 w-4" />
               </div>
             )}

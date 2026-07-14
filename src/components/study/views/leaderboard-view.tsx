@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { fmtDurationLong } from "@/lib/format";
 
 type Entry = { rank: number; username: string; avatar: string; xp: number; level: number; topicsDone: number; studySeconds: number; updatedAt: string };
-const podiumStyles = ["border-amber-400/50 bg-gradient-to-br from-amber-500/20 to-orange-500/5", "border-slate-400/40 bg-gradient-to-br from-slate-400/15 to-transparent", "border-orange-700/40 bg-gradient-to-br from-orange-700/15 to-transparent"];
+const podiumStyles = ["border-amber-400/50 bg-amber-500/[0.06]", "border-slate-400/40 bg-slate-400/[0.04]", "border-orange-700/40 bg-orange-700/[0.04]"];
 const avatarGradients: Record<string, string> = {
   "grad-1": "from-amber-400 to-orange-600",
   "grad-2": "from-violet-500 to-fuchsia-700",
@@ -39,7 +39,7 @@ export function LeaderboardView({ currentUser }: { currentUser: string }) {
 
   return <div className="space-y-5">
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div><div className="mb-1 flex items-center gap-2 text-amber-500"><Trophy className="h-5 w-5" /><span className="text-xs font-bold uppercase tracking-[0.18em]">Community standings</span></div><h2 className="font-display text-2xl font-black tracking-tight md:text-3xl">Leaderboard</h2><p className="mt-1 text-sm text-muted-foreground">Earn XP by studying and completing topics. Rankings update from cloud progress.</p></div>
+      <div><div className="mb-1 flex items-center gap-2 text-sm font-medium text-amber-500"><Trophy className="h-5 w-5" /><span>Community standings</span></div><h2 className="font-display text-2xl font-bold tracking-tight md:text-3xl">Leaderboard</h2><p className="mt-1 text-sm text-muted-foreground">Earn XP by studying and completing topics. Rankings update from cloud progress.</p></div>
       <Button variant="outline" size="sm" onClick={load} disabled={loading}><RotateCcw className={cn("mr-1.5 h-3.5 w-3.5", loading && "animate-spin")} />Refresh</Button>
     </div>
 

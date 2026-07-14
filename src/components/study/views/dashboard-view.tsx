@@ -65,15 +65,14 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
       {/* Hero row: level + daily goal + overall */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Level card */}
-        <Card className="relative overflow-hidden border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card premium-card-hover premium-glow">
-          <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-amber-500/10 blur-2xl" />
+        <Card className="relative overflow-hidden border-amber-500/30 premium-card-hover">
           <CardContent className="relative p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                   Level {game.level} · {game.title}
                 </div>
-                <div className="mt-1 text-2xl font-black tracking-tight tabular-nums bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                <div className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-foreground">
                   {game.xp.toLocaleString()} XP
                 </div>
               </div>
@@ -97,7 +96,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         {/* Daily goal card */}
         <Card className={cn(
           "premium-card-hover transition-all duration-300",
-          goal >= 1 && "border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-card"
+          goal >= 1 && "border-emerald-500/30 bg-emerald-500/[0.04]"
         )}>
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
@@ -133,7 +132,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         </Card>
 
         {/* Overall progress card */}
-        <Card className="premium-card-hover border-violet-500/10 bg-gradient-to-br from-violet-500/5 via-card to-card">
+        <Card className="premium-card-hover border-violet-500/20">
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
