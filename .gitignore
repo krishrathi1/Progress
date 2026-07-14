@@ -52,3 +52,18 @@ prompt
 server.log
 # Skills directory
 /skills/
+# ---------------- StudyTracker repo hygiene ----------------
+# Sandbox / tooling artifacts (not part of the app)
+/.zscripts/
+/download/
+/tool-results/
+/upload/
+/examples/
+/mini-services/
+/db/*.db
+/db/*.db-journal
+worklog.md
+
+# Local env (use .env.example as reference)
+.env
+.env.local

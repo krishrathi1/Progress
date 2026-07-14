@@ -16,6 +16,8 @@ function heatColor(seconds: number): string {
   return "#f59e0b"; // 2h+
 }
 
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
 export function Heatmap() {
   const daily = useStudyStore((s) => s.daily);
 
@@ -53,45 +55,48 @@ export function Heatmap() {
     const labels: { col: number; label: string }[] = [];
     let lastMonth = -1;
     grid.forEach((col, ci) => {
-      // use the first day of the week's month
       const m = new Date(col[0].date).getMonth();
       if (m !== lastMonth) {
-        labels.push({ col: ci, label: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m] });
+        labels.push({ col: ci, label: MONTHS[m] });
         lastMonth = m;
       }
     });
     return labels;
   }, [grid]);
 
+  const todayKeyStr = todayKey();
+
   return (
-    <div className="w-full overflow-x-auto st-scroll">
-      <div className="inline-block min-w-full">
-        {/* month labels */}
-        <div className="mb-1 flex pl-6 text-[10px] text-muted-foreground">
-          {grid.map((_col, ci) => {
-            const lbl = monthLabels.find((m) => m.col === ci);
-            return (
-              <div key={ci} className="w-3 text-left" style={{ minWidth: 12 }}>
-                {lbl ? lbl.label : ""}
-              </div>
-            );
-          })}
+    <div className="w-full">
+      {/* month labels — aligned with the week columns (offset matches weekday gutter) */}
+      <div className="mb-1.5 flex gap-[3px] pl-[22px] text-[10px] text-muted-foreground">
+        {grid.map((_col, ci) => {
+          const lbl = monthLabels.find((m) => m.col === ci);
+          return (
+            <div key={ci} className="min-w-0 flex-1 truncate text-left">
+              {lbl ? lbl.label : ""}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex gap-[3px]">
+        {/* weekday labels */}
+        <div className="flex w-[18px] shrink-0 flex-col justify-between py-[1px] text-[9px] leading-none text-muted-foreground">
+          <span>Mon</span>
+          <span>Wed</span>
+          <span>Fri</span>
         </div>
-        <div className="flex gap-[3px]">
-          {/* weekday labels */}
-          <div className="mr-1 flex flex-col justify-between py-[1px] text-[10px] text-muted-foreground">
-            <span>Mon</span>
-            <span>Wed</span>
-            <span>Fri</span>
-          </div>
-          {/* cells */}
+
+        {/* cells — each week column is fluid (flex-1) so the grid fills the full width */}
+        <div className="flex flex-1 gap-[3px]">
           {grid.map((col, ci) => (
-            <div key={ci} className="flex flex-col gap-[3px]">
+            <div key={ci} className="flex min-w-0 flex-1 flex-col gap-[3px]">
               {col.map((cell, ri) => (
                 <div
                   key={ri}
                   className={cn(
-                    "h-3 w-3 rounded-[3px] border border-black/5 dark:border-white/5",
+                    "aspect-square w-full rounded-[3px] border border-black/5 dark:border-white/5",
                     cell.isToday && "heat-today ring-1 ring-amber-500/50",
                   )}
                   style={{
@@ -103,19 +108,25 @@ export function Heatmap() {
             </div>
           ))}
         </div>
-        {/* legend */}
-        <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-muted-foreground">
-          <span>Less</span>
-          {[0, 1200, 3600, 7200, 10800].map((s, i) => (
-            <div
-              key={i}
-              className="h-3 w-3 rounded-[3px] border border-black/5 dark:border-white/5"
-              style={{ backgroundColor: heatColor(s) }}
-            />
-          ))}
-          <span>More</span>
-        </div>
       </div>
+
+      {/* legend */}
+      <div className="mt-2.5 flex items-center justify-end gap-1.5 text-[10px] text-muted-foreground">
+        <span>Less</span>
+        {[0, 1200, 3600, 7200, 10800].map((s, i) => (
+          <div
+            key={i}
+            className="h-3 w-3 rounded-[3px] border border-black/5 dark:border-white/5"
+            style={{ backgroundColor: heatColor(s) }}
+          />
+        ))}
+        <span>More</span>
+      </div>
+
+      {/* screen-reader summary */}
+      <span className="sr-only">
+        Activity heatmap for the last 26 weeks. Today is {todayKeyStr}.
+      </span>
     </div>
   );
 }

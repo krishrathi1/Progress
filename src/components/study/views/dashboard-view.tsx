@@ -4,12 +4,12 @@ import * as React from "react";
 import {
   Flame,
   Clock,
-  Target,
   TrendingUp,
   Layers,
   ArrowRight,
   Calendar,
   Zap,
+  Target,
 } from "lucide-react";
 import {
   useStudyStore,
@@ -39,6 +39,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
   // subscribe so it re-renders on progress changes
   useStudyStore((s) => s.progress);
   useStudyStore((s) => s.daily);
+  const goalMin = useStudyStore((s) => s.settings.dailyGoalMin);
 
   const o = overallStats();
   const todaySec = todaySeconds();
@@ -58,22 +59,22 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
     );
   }, [o.done, o.seconds, curStreak]);
 
-  const goalMin = useStudyStore((s) => s.settings.dailyGoalMin);
-
   return (
-    <div className="st-fade-in space-y-5">
-      {/* Hero: level + daily goal + overall */}
+    <div className="st-fade-in space-y-4">
+      {/* Hero row: level + daily goal + overall */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Level card */}
         <Card className="relative overflow-hidden border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card">
           <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-amber-500/10 blur-2xl" />
           <CardContent className="relative p-5">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0">
                 <div className="text-[11px] font-medium uppercase tracking-wider text-amber-600 dark:text-amber-400">
                   Level {game.level} · {game.title}
                 </div>
-                <div className="mt-1 text-2xl font-bold tabular-nums">{game.xp.toLocaleString()} XP</div>
+                <div className="mt-1 text-2xl font-bold tabular-nums">
+                  {game.xp.toLocaleString()} XP
+                </div>
               </div>
               <ProgressRing value={game.pct} size={56} stroke={5} color="#f59e0b">
                 <span className="text-sm font-bold">{game.level}</span>
@@ -81,8 +82,8 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
             </div>
             <div className="mt-3">
               <div className="mb-1 flex justify-between text-[11px] text-muted-foreground">
-                <span>{game.floor.toLocaleString()} XP</span>
-                <span>{game.next.toLocaleString()} XP</span>
+                <span>{game.floor.toLocaleString()}</span>
+                <span>{game.next.toLocaleString()}</span>
               </div>
               <Progress value={game.pct * 100} className="h-1.5" />
               <div className="mt-1 text-[11px] text-muted-foreground">
@@ -96,7 +97,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0">
                 <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   Today
                 </div>
@@ -114,7 +115,9 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
             <div className="mt-3">
               <Progress value={goal * 100} className="h-1.5" />
               <div className="mt-1 text-[11px] text-muted-foreground">
-                {goal >= 1 ? "Daily goal reached! " : `${fmtDuration(Math.max(0, goalMin * 60 - todaySec))} to go`}
+                {goal >= 1
+                  ? "Daily goal reached!"
+                  : `${fmtDuration(Math.max(0, goalMin * 60 - todaySec))} to go`}
               </div>
             </div>
           </CardContent>
@@ -124,12 +127,13 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0">
                 <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   Overall progress
                 </div>
                 <div className="mt-1 text-2xl font-bold tabular-nums">
-                  {o.done}<span className="text-base font-normal text-muted-foreground">/{o.total}</span>
+                  {o.done}
+                  <span className="text-base font-normal text-muted-foreground">/{o.total}</span>
                 </div>
                 <div className="text-[11px] text-muted-foreground">topics completed</div>
               </div>
@@ -158,18 +162,12 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
 
       {/* Continue + Recent */}
       <div className="grid gap-4 lg:grid-cols-2">
-        {/* Continue where you left off */}
         <Card>
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <Zap className="h-4 w-4 text-amber-500" />
-                Continue where you left off
-              </CardTitle>
-              <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => navigate({ view: "analytics" })}>
-                Analytics <ArrowRight className="ml-1 h-3 w-3" />
-              </Button>
-            </div>
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <Zap className="h-4 w-4 text-amber-500" />
+              Continue where you left off
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
             {next.length === 0 ? (
@@ -180,13 +178,24 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
           </CardContent>
         </Card>
 
-        {/* Recent activity */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Clock className="h-4 w-4 text-cyan-500" />
-              Recent sessions
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <Clock className="h-4 w-4 text-cyan-500" />
+                Recent sessions
+              </CardTitle>
+              {recent.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => navigate({ view: "analytics" })}
+                >
+                  Analytics <ArrowRight className="ml-1 h-3 w-3" />
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-1">
             {recent.length === 0 ? (
@@ -195,9 +204,10 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
               recent.map((a, i) => {
                 const sub = a.subjectId ? SUBJECT_MAP[a.subjectId] : undefined;
                 return (
-                  <div
+                  <button
                     key={i}
-                    className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-muted/50"
+                    onClick={() => a.subjectId && navigate({ view: "track", subjectId: a.subjectId })}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left hover:bg-muted/50"
                   >
                     <span
                       className="h-2 w-2 shrink-0 rounded-full"
@@ -210,7 +220,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
                     <span className="shrink-0 text-[11px] text-muted-foreground">
                       {fmtAgo(a.ts)}
                     </span>
-                  </div>
+                  </button>
                 );
               })
             )}
@@ -218,14 +228,16 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         </Card>
       </div>
 
-      {/* Heatmap */}
+      {/* Heatmap — full width section */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Calendar className="h-4 w-4 text-emerald-500" />
-            Activity heatmap
-            <span className="ml-1 text-xs font-normal text-muted-foreground">last 26 weeks</span>
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <Calendar className="h-4 w-4 text-emerald-500" />
+              Activity heatmap
+            </CardTitle>
+            <span className="text-xs font-normal text-muted-foreground">last 26 weeks</span>
+          </div>
         </CardHeader>
         <CardContent>
           <Heatmap />
@@ -235,10 +247,15 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
       {/* Track overview grid */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Layers className="h-4 w-4 text-violet-500" />
-            Your tracks
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <Layers className="h-4 w-4 text-violet-500" />
+              Your tracks
+            </CardTitle>
+            <span className="text-xs text-muted-foreground">
+              {o.done}/{o.total} done
+            </span>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -320,8 +337,9 @@ function StatTile({
 
 function EmptyHint({ text }: { text: string }) {
   return (
-    <div className="rounded-lg border border-dashed py-8 text-center text-xs text-muted-foreground">
-      {text}
+    <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed py-10 text-center">
+      <Target className="h-5 w-5 text-muted-foreground/60" />
+      <span className="text-xs text-muted-foreground">{text}</span>
     </div>
   );
 }
