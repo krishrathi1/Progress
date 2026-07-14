@@ -17,6 +17,7 @@ import { AnalyticsView } from "./views/analytics-view";
 import { AchievementsView } from "./views/achievements-view";
 import { DataView } from "./views/data-view";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { LogOut } from "lucide-react";
 
 const VIEW_TITLES: Record<string, string> = {
   dashboard: "Dashboard",
@@ -25,7 +26,7 @@ const VIEW_TITLES: Record<string, string> = {
   data: "Data & Settings",
 };
 
-export function AppShell() {
+export function AppShell({ onLogout }: { onLogout: () => void }) {
   const [route, navigate] = useHashRoute();
   const [paletteOpen, setPaletteOpen] = React.useState(false);
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
@@ -133,6 +134,15 @@ export function AppShell() {
               <Search className="h-4 w-4" />
             </Button>
             <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground hover:text-destructive cursor-pointer"
+              onClick={onLogout}
+              aria-label="Log out"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </header>
 
