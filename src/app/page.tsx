@@ -9,45 +9,52 @@ const AppShell = dynamic(
   { ssr: false }
 );
 
+const defaultSettings = {
+  dailyGoalMin: 120,
+  pomoFocus: 25,
+  pomoBreak: 5,
+  celebrate: true,
+};
+
+const defaultProfile = {
+  avatar: "grad-1",
+  customTitle: "Novice Learner",
+  motto: "Consistency is key.",
+};
+
+async function loadUserState(username: string) {
+  const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
+  const data = accounts[username]?.data;
+  const { useStudyStore } = await import("@/lib/store");
+
+  // Always replace every user-owned field. This prevents the shared Zustand
+  // browser cache from leaking the previous account's progress into this one.
+  useStudyStore.setState({
+    progress: data?.progress || {},
+    daily: data?.daily || {},
+    activeTimer: null,
+    seenAch: data?.seenAch || [],
+    meta: data?.meta || { created: Date.now() },
+    settings: { ...defaultSettings, ...(data?.settings || {}) },
+    profile: { ...defaultProfile, ...(data?.profile || {}) },
+  });
+}
+
 export default function Home() {
   const [user, setUser] = React.useState<string | null>(null);
+  const [initializing, setInitializing] = React.useState(true);
 
   React.useEffect(() => {
     // Check if user is logged in
     const active = localStorage.getItem("studytracker.currentUser");
-    if (active) {
-      setUser(active);
-    }
+    if (active) loadUserState(active).then(() => setUser(active)).finally(() => setInitializing(false));
+    else setInitializing(false);
   }, []);
 
-  const handleLogin = (username: string) => {
+  const handleLogin = async (username: string) => {
     localStorage.setItem("studytracker.currentUser", username);
+    await loadUserState(username);
     setUser(username);
-
-    // Load user data into the Zustand store
-    const accounts = JSON.parse(localStorage.getItem("studytracker.accounts") || "{}");
-    const userData = accounts[username]?.data;
-    if (userData) {
-      import("@/lib/store").then(({ useStudyStore }) => {
-        useStudyStore.setState({
-          progress: userData.progress || {},
-          daily: userData.daily || {},
-          seenAch: userData.seenAch || [],
-          meta: userData.meta || { created: Date.now() },
-          settings: userData.settings || {
-            dailyGoalMin: 120,
-            pomoFocus: 25,
-            pomoBreak: 5,
-            celebrate: true,
-          },
-          profile: userData.profile || {
-            avatar: "grad-1",
-            customTitle: "Novice Learner",
-            motto: "Consistency is key.",
-          },
-        });
-      });
-    }
   };
 
   const handleLogout = () => {
@@ -79,7 +86,10 @@ export default function Home() {
         }).catch((err) => console.warn("Logout sync failed:", err.message));
       });
     }
+    // Remove the active identity before clearing memory so the reset cannot be
+    // auto-synced over the account that just logged out.
     localStorage.removeItem("studytracker.currentUser");
+    import("@/lib/store").then(({ useStudyStore }) => useStudyStore.getState().resetAll());
     setUser(null);
   };
 
@@ -138,6 +148,8 @@ export default function Home() {
       clearTimeout(timeoutId);
     };
   }, [user]);
+
+  if (initializing) return null;
 
   if (!user) {
     return <AuthView onLogin={handleLogin} />;
