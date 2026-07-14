@@ -110,7 +110,7 @@ export function AuthView({ onLogin }: { onLogin: (username: string) => void }) {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-background p-4">
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-y-auto bg-background py-8 px-4">
       {/* Background decoration */}
       <div className="pointer-events-none absolute left-1/4 top-1/4 h-[350px] w-[350px] rounded-full bg-amber-500/10 blur-[100px]" />
       <div className="pointer-events-none absolute right-1/4 bottom-1/4 h-[350px] w-[350px] rounded-full bg-orange-600/10 blur-[100px]" />
