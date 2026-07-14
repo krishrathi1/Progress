@@ -106,7 +106,7 @@ export function AppShell({ onLogout, currentUser }: { onLogout: () => void; curr
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background/80 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-5">
+        <header className="flex h-14 shrink-0 items-center gap-1 border-b bg-background/80 px-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:gap-2 sm:px-3 md:px-5">
           {isMobile && (
             <Button
               variant="ghost"
@@ -118,26 +118,26 @@ export function AppShell({ onLogout, currentUser }: { onLogout: () => void; curr
               <Menu className="h-5 w-5" />
             </Button>
           )}
-          <div className="flex items-center gap-2">
+          <div className="min-w-0 flex items-center gap-2">
             {isMobile && (
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white">
                 <GraduationCap className="h-4 w-4" />
               </div>
             )}
-            <h1 className="truncate text-sm font-semibold md:text-base">{title}</h1>
+            <h1 className="max-w-[110px] truncate text-sm font-semibold sm:max-w-none md:text-base">{title}</h1>
           </div>
           <div className="ml-auto flex items-center gap-1.5">
             <FocusControl />
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9"
+              className="hidden h-9 w-9 sm:inline-flex"
               onClick={() => setPaletteOpen(true)}
               aria-label="Search"
             >
               <Search className="h-4 w-4" />
             </Button>
-            <ThemeToggle />
+            <div className="hidden sm:block"><ThemeToggle /></div>
             <ProfileButton />
             <Button
               variant="ghost"

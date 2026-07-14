@@ -67,7 +67,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
         {/* Level card */}
         <Card className="relative overflow-hidden border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card premium-card-hover premium-glow">
           <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-amber-500/10 blur-2xl" />
-          <CardContent className="relative p-5">
+          <CardContent className="relative p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
@@ -99,7 +99,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
           "premium-card-hover transition-all duration-300",
           goal >= 1 && "border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-card"
         )}>
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <div className={cn(
@@ -134,7 +134,7 @@ export function DashboardView({ navigate }: { navigate: (r: Route) => void }) {
 
         {/* Overall progress card */}
         <Card className="premium-card-hover border-violet-500/10 bg-gradient-to-br from-violet-500/5 via-card to-card">
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-violet-500">

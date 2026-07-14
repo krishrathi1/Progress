@@ -109,17 +109,17 @@ export function TrackView({
         </Button>
 
         <Card className="overflow-hidden">
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <ProgressRing value={stats.pct} size={64} stroke={6} color={sub.color}>
+              <div className="min-w-0 flex items-start gap-3 sm:gap-4">
+                <ProgressRing value={stats.pct} size={52} stroke={5} color={sub.color}>
                   <span className="text-sm font-bold" style={{ color: sub.color }}>
                     {fmtPct(stats.pct)}
                   </span>
                 </ProgressRing>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-bold tracking-tight">{sub.name}</h1>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="text-lg font-bold leading-tight tracking-tight sm:text-xl">{sub.name}</h1>
                     <span
                       className="rounded-md px-2 py-0.5 text-[10px] font-bold"
                       style={{
@@ -130,7 +130,7 @@ export function TrackView({
                       {sub.short}
                     </span>
                   </div>
-                  <p className="mt-1 max-w-xl text-sm text-muted-foreground">{sub.desc}</p>
+                  <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground sm:text-sm">{sub.desc}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {stats.done}/{stats.total} done</span>
                     <span className="flex items-center gap-1"><Loader2 className="h-3.5 w-3.5 text-amber-500" /> {stats.doing} in progress</span>
@@ -142,12 +142,12 @@ export function TrackView({
               </div>
 
               {/* Difficulty breakdown */}
-              <div className="flex gap-2">
+              <div className="grid w-full grid-cols-3 gap-2 sm:flex sm:w-auto">
                 {(["Easy", "Medium", "Hard"] as const).map((d) => {
                   const ds = stats.diff[d];
                   if (ds.total === 0) return null;
                   return (
-                    <div key={d} className="rounded-lg border bg-card px-3 py-2 text-center">
+                    <div key={d} className="rounded-lg border bg-card px-2 py-2 text-center sm:px-3">
                       <div className="text-[10px] uppercase text-muted-foreground">{d}</div>
                       <div className="text-sm font-bold">{ds.done}<span className="text-xs font-normal text-muted-foreground">/{ds.total}</span></div>
                     </div>
@@ -160,7 +160,7 @@ export function TrackView({
       </div>
 
       {/* Search + filters */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
         <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -170,7 +170,7 @@ export function TrackView({
             className="pl-9"
           />
         </div>
-        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filter topics">
+        <div className="st-scroll flex w-full items-center gap-1.5 overflow-x-auto pb-1 sm:w-auto sm:flex-wrap sm:overflow-visible sm:pb-0" role="group" aria-label="Filter topics">
           {FILTERS.map((f) => {
             const active = filter === f.value;
             return (
@@ -192,14 +192,14 @@ export function TrackView({
                 ) : (
                   f.icon
                 )}
-                <span className="hidden sm:inline">{f.label}</span>
+                <span>{f.label}</span>
               </button>
             );
           })}
         </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground hover:text-destructive">
+            <Button variant="ghost" size="sm" className="h-8 self-start text-xs text-muted-foreground hover:text-destructive">
               <RotateCcw className="mr-1 h-3.5 w-3.5" /> Reset track
             </Button>
           </AlertDialogTrigger>
@@ -247,7 +247,7 @@ export function TrackView({
             >
               <Card className="overflow-hidden">
                 <CollapsibleTrigger asChild>
-                  <div className="flex w-full items-center gap-3 p-3 text-left hover:bg-muted/40 cursor-pointer select-none">
+                  <div className="flex w-full items-center gap-2 p-3 text-left hover:bg-muted/40 cursor-pointer select-none sm:gap-3">
                     {isOpen || hasActiveFilter ? (
                       <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     ) : (
@@ -274,19 +274,19 @@ export function TrackView({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 text-[11px] text-muted-foreground hover:text-foreground"
+                      className="h-7 w-7 px-0 text-[11px] text-muted-foreground hover:text-foreground sm:w-auto sm:px-3"
                       onClick={(e) => {
                         e.stopPropagation();
                         markSectionDone(subjectId, si);
                         toast.success(`Marked all in "${sec.name}" as done`);
                       }}
                     >
-                      <CheckCheck className="mr-1 h-3 w-3" /> All done
+                      <CheckCheck className="h-3 w-3 sm:mr-1" /> <span className="hidden sm:inline">All done</span>
                     </Button>
                   </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="st-scroll max-h-[480px] overflow-y-auto border-t px-2 py-2">
+                  <div className="st-scroll max-h-[65vh] overflow-y-auto border-t px-1 py-1.5 sm:max-h-[480px] sm:px-2 sm:py-2">
                     {visible.length === 0 ? (
                       <div className="py-6 text-center text-xs text-muted-foreground">
                         No topics match the current filter.

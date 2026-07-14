@@ -54,7 +54,7 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
   return (
     <div
       className={cn(
-        "group flex items-start gap-2 rounded-lg border border-transparent px-2 py-2 transition-colors hover:bg-muted/50",
+        "group flex flex-wrap items-start gap-x-2 gap-y-1 rounded-lg border border-transparent px-2 py-2 transition-colors hover:bg-muted/50 sm:flex-nowrap",
         isDone && "opacity-70",
         isRunning && "bg-amber-500/5 ring-1 ring-amber-500/30",
       )}
@@ -75,10 +75,10 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
 
       {/* main content */}
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span
             className={cn(
-              "text-sm leading-snug",
+              "min-w-0 text-[13px] leading-snug sm:text-sm",
               isDone && "text-muted-foreground line-through",
             )}
           >
@@ -154,7 +154,7 @@ export function TopicRow({ topic, showSection }: TopicRowProps) {
       </div>
 
       {/* actions */}
-      <div className="flex shrink-0 items-center gap-0.5">
+      <div className="ml-7 flex basis-full items-center justify-end gap-0.5 border-t border-border/40 pt-1 sm:ml-0 sm:basis-auto sm:border-0 sm:pt-0">
         <TooltipProvider delayDuration={300}>
           <NotesButton topic={topic} />
 
